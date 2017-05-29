@@ -1,5 +1,6 @@
 var colors = require('colors');
 var moment = require('moment');
+var winston = require('winston');
 
 var eventHandlers = {
 
@@ -13,7 +14,7 @@ var eventHandlers = {
 
   onNewOutage: function (service, outage) {
     var errorMsg = service.name + ' down!'.red + '. Error: ' + JSON.stringify(outage.error).red;
-    console.log(errorMsg);
+    winston.error(errorMsg);
   },
 
   /**
@@ -26,7 +27,7 @@ var eventHandlers = {
 
   onCurrentOutage: function (service, outage) {
     var errorMsg = service.name + ' is still down!'.red + '. Error: ' + JSON.stringify(outage.error).red;
-    console.log(errorMsg);
+    winston.error(errorMsg);
   },
 
   /**
@@ -39,7 +40,7 @@ var eventHandlers = {
 
   onFailedCheck: function (service, data) {
     var errorMsg = service.name + ' check failed!'.red + '. Error: ' + JSON.stringify(data.error).red;
-    console.log(errorMsg);
+    winston.error(errorMsg);
   },
 
   /**
@@ -51,7 +52,7 @@ var eventHandlers = {
 
   onLatencyWarning: function (service, data) {
     var msg = service.name + ' latency warning'.yellow + '. Took: ' + (data.elapsedTime + ' ms.').yellow;
-    console.log(msg);
+    winston.warn(msg);
   },
 
   /**
@@ -64,7 +65,7 @@ var eventHandlers = {
 
   onServiceBack: function (service, lastOutage) {
     var duration = moment.duration(+new Date() - lastOutage.timestamp, 'seconds');
-    console.log(service.name.white + ' is back'.green + '. Down for '.gray + duration.humanize().white);
+    winston.info(service.name.white + ' is back'.green + '. Down for '.gray + duration.humanize().white);
   },
 
   /**
@@ -77,7 +78,7 @@ var eventHandlers = {
   onServiceOk: function (service, data) {
     var serviceOkMsg = service.name + ' responded ' + 'OK!'.green;
     var responseTimeMsg = data.elapsedTime + ' ms.';
-    console.log(serviceOkMsg, responseTimeMsg.gray);
+    winston.info(serviceOkMsg, responseTimeMsg.gray);
   }
 };
 

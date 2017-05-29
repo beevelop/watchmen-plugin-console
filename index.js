@@ -1,6 +1,10 @@
-var colors = require('colors');
 var moment = require('moment');
 var winston = require('winston');
+winston.remove(winston.transports.Console)
+winston.add(winston.transports.Console, {
+  'timestamp': true,
+  'colorize': true
+})
 
 var eventHandlers = {
 
@@ -13,7 +17,7 @@ var eventHandlers = {
    */
 
   onNewOutage: function (service, outage) {
-    var errorMsg = service.name + ' down!'.red + '. Error: ' + JSON.stringify(outage.error).red;
+    var errorMsg = service.name + ' down!' + JSON.stringify(outage.error);
     winston.error(errorMsg);
   },
 
@@ -26,7 +30,7 @@ var eventHandlers = {
    */
 
   onCurrentOutage: function (service, outage) {
-    var errorMsg = service.name + ' is still down!'.red + '. Error: ' + JSON.stringify(outage.error).red;
+    var errorMsg = service.name + ' is still down!' + JSON.stringify(outage.error);
     winston.error(errorMsg);
   },
 
@@ -39,7 +43,7 @@ var eventHandlers = {
    */
 
   onFailedCheck: function (service, data) {
-    var errorMsg = service.name + ' check failed!'.red + '. Error: ' + JSON.stringify(data.error).red;
+    var errorMsg = service.name + ' check failed!' + JSON.stringify(data.error);
     winston.error(errorMsg);
   },
 
@@ -51,7 +55,7 @@ var eventHandlers = {
    */
 
   onLatencyWarning: function (service, data) {
-    var msg = service.name + ' latency warning'.yellow + '. Took: ' + (data.elapsedTime + ' ms.').yellow;
+    var msg = service.name + ' latency warning. Took: ' + (data.elapsedTime + ' ms.');
     winston.warn(msg);
   },
 
@@ -65,7 +69,7 @@ var eventHandlers = {
 
   onServiceBack: function (service, lastOutage) {
     var duration = moment.duration(+new Date() - lastOutage.timestamp, 'seconds');
-    winston.info(service.name.white + ' is back'.green + '. Down for '.gray + duration.humanize().white);
+    winston.info(service.name + ' is back. Down for ' + duration.humanize());
   },
 
   /**
@@ -76,9 +80,9 @@ var eventHandlers = {
    */
 
   onServiceOk: function (service, data) {
-    var serviceOkMsg = service.name + ' responded ' + 'OK!'.green;
+    var serviceOkMsg = service.name + ' responded OK!';
     var responseTimeMsg = data.elapsedTime + ' ms.';
-    winston.info(serviceOkMsg, responseTimeMsg.gray);
+    winston.info(serviceOkMsg, responseTimeMsg);
   }
 };
 

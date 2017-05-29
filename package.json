@@ -1,6 +1,6 @@
 {
   "name": "watchmen-plugin-console",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Console plugin for watchmen",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,6 @@
   "author": "Ivan Loire",
   "license": "MIT",
   "dependencies": {
-    "colors": "^1.1.2",
     "moment": "^2.18.1",
     "winston": "^2.3.1"
   }

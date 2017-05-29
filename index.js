@@ -1,5 +1,5 @@
-var moment = require('moment');
-var winston = require('winston');
+var moment = require('moment')
+var winston = require('winston')
 winston.remove(winston.transports.Console)
 winston.add(winston.transports.Console, {
   'timestamp': true,
@@ -15,10 +15,8 @@ var eventHandlers = {
    * @param {Object} outage.error check error
    * @param {number} outage.timestamp outage timestamp
    */
-
-  onNewOutage: function (service, outage) {
-    var errorMsg = service.name + ' down!' + JSON.stringify(outage.error);
-    winston.error(errorMsg);
+  onNewOutage: (service, outage) => {
+    winston.error(`${service.name} down!`, outage.error)
   },
 
   /**
@@ -28,10 +26,8 @@ var eventHandlers = {
    * @param {Object} outage.error check error
    * @param {number} outage.timestamp outage timestamp
    */
-
-  onCurrentOutage: function (service, outage) {
-    var errorMsg = service.name + ' is still down!' + JSON.stringify(outage.error);
-    winston.error(errorMsg);
+  onCurrentOutage: (service, outage) => {
+    winston.error(`${service.name} is still down!`, outage.error)
   },
 
   /**
@@ -41,10 +37,8 @@ var eventHandlers = {
    * @param {Object} data.error check error
    * @param {number} data.currentFailureCount number of consecutive check failures
    */
-
-  onFailedCheck: function (service, data) {
-    var errorMsg = service.name + ' check failed!' + JSON.stringify(data.error);
-    winston.error(errorMsg);
+  onFailedCheck: (service, data) => {
+    winston.error(`${service.name} check failed!`, data.error)
   },
 
   /**
@@ -53,10 +47,8 @@ var eventHandlers = {
    * @param {Object} data
    * @param {number} data.elapsedTime (ms)
    */
-
-  onLatencyWarning: function (service, data) {
-    var msg = service.name + ' latency warning. Took: ' + (data.elapsedTime + ' ms.');
-    winston.warn(msg);
+  onLatencyWarning: (service, data) => {
+    winston.warn(`${service.name} latency warning. Took: ${data.elapsedTime}ms`)
   },
 
   /**
@@ -66,10 +58,9 @@ var eventHandlers = {
    * @param {Object} lastOutage.error
    * @param {number} lastOutage.timestamp (ms)
    */
-
-  onServiceBack: function (service, lastOutage) {
-    var duration = moment.duration(+new Date() - lastOutage.timestamp, 'seconds');
-    winston.info(service.name + ' is back. Down for ' + duration.humanize());
+  onServiceBack: (service, lastOutage) => {
+    var duration = moment.duration(+new Date() - lastOutage.timestamp, 'seconds')
+    winston.info(`${service.name} is back. Down for ${duration.humanize()}`)
   },
 
   /**
@@ -78,22 +69,17 @@ var eventHandlers = {
    * @param {Object} data
    * @param {number} data.elapsedTime (ms)
    */
-
-  onServiceOk: function (service, data) {
-    var serviceOkMsg = service.name + ' responded OK!';
-    var responseTimeMsg = data.elapsedTime + ' ms.';
-    winston.info(serviceOkMsg, responseTimeMsg);
+  onServiceOk: (service, data) => {
+    winston.info(`${service.name} responded OK! ${data.elapsedTime}ms`)
   }
-};
-
-function ConsolePlugin(watchmen) {
-  watchmen.on('new-outage', eventHandlers.onNewOutage);
-  watchmen.on('current-outage', eventHandlers.onCurrentOutage);
-  watchmen.on('service-error', eventHandlers.onFailedCheck);
-
-  watchmen.on('latency-warning', eventHandlers.onLatencyWarning);
-  watchmen.on('service-back', eventHandlers.onServiceBack);
-  watchmen.on('service-ok', eventHandlers.onServiceOk);
 }
 
-exports = module.exports = ConsolePlugin;
+exports = module.exports = (watchmen) => {
+  watchmen.on('new-outage', eventHandlers.onNewOutage)
+  watchmen.on('current-outage', eventHandlers.onCurrentOutage)
+  watchmen.on('service-error', eventHandlers.onFailedCheck)
+
+  watchmen.on('latency-warning', eventHandlers.onLatencyWarning)
+  watchmen.on('service-back', eventHandlers.onServiceBack)
+  watchmen.on('service-ok', eventHandlers.onServiceOk)
+}
